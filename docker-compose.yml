@@ -1,0 +1,48 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: nexacode
+      POSTGRES_USER: nexacode
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-nexacode-local-change-me}
+    ports: ["127.0.0.1:5432:5432"]
+    volumes:
+      - nexacode_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/001-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nexacode -d nexacode"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  judge0-db:
+    image: postgres:16.2
+    profiles: [execution]
+    env_file: judge0.conf
+    volumes: [judge0_data:/var/lib/postgresql/data]
+    restart: unless-stopped
+  judge0-redis:
+    image: redis:7.2.4
+    profiles: [execution]
+    env_file: judge0.conf
+    command: ["bash", "-c", "docker-entrypoint.sh --appendonly no --requirepass \"$$REDIS_PASSWORD\""]
+    restart: unless-stopped
+  judge0-server:
+    image: judge0/judge0:1.13.1
+    profiles: [execution]
+    depends_on: [judge0-db, judge0-redis]
+    volumes: ["./judge0.conf:/judge0.conf:ro"]
+    ports: ["127.0.0.1:2358:2358"]
+    privileged: true
+    restart: unless-stopped
+  judge0-worker:
+    image: judge0/judge0:1.13.1
+    profiles: [execution]
+    command: ["./scripts/workers"]
+    depends_on: [judge0-db, judge0-redis]
+    volumes: ["./judge0.conf:/judge0.conf:ro"]
+    privileged: true
+    restart: unless-stopped
+volumes:
+  nexacode_data:
+  judge0_data:

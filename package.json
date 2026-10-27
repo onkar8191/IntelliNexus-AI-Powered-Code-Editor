@@ -1,0 +1,57 @@
+{
+  "name": "nexacode",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -n api,web -c cyan,green npm:dev:api npm:dev:web",
+    "dev:api": "npm run build:api && node --watch dist-server/index.js",
+    "dev:web": "vite",
+    "build": "npm run build:api && npm run build:web",
+    "build:api": "tsc -p tsconfig.server.json",
+    "build:web": "tsc -p tsconfig.app.json && vite build",
+    "start:api": "node dist-server/index.js",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.app.json && tsc -p tsconfig.server.json --noEmit",
+    "ingest": "npm run build:api && node dist-server/ingest.js",
+    "eval:rag": "npm run build:api && node dist-server/evaluate-rag.js",
+    "mcp": "npm run build:api && node dist-server/mcp.js",
+    "mcp:http": "npm run build:api && node dist-server/mcp-http.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "@monaco-editor/react": "^4.7.0",
+    "bcryptjs": "^3.0.3",
+    "concurrently": "^10.0.6",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.8",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.1",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "monaco-editor": "^0.52.2",
+    "pg": "^8.23.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "sql.js": "^1.13.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^22.20.5",
+    "@types/pg": "^8.23.1",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@types/sql.js": "^1.4.11",
+    "@vitejs/plugin-react": "^4.6.0",
+    "tsx": "^4.23.15",
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5",
+    "vitest": "^5.0.5"
+  }
+}
+
+

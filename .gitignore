@@ -1,0 +1,10 @@
+node_modules
+dist
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+judge0.conf
+.env
+
+dist-server
+
